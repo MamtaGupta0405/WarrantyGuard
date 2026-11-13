@@ -13,7 +13,10 @@ app.use(express.json());
 //app.use(cors())
 //permission like fronted
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: [
+        "http://localhost:5173",
+        "https://warranty-guard-f6uo.vercel.app"
+    ],
     credentials: true
 }));
 app.use(express.urlencoded({ extended: true }));
