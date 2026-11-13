@@ -1,0 +1,24 @@
+# Node Modules
+node_modules/
+
+# Environment Variables
+.env
+.env.*
+
+# Allow example env file
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Uploads
+uploads/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Temporary Files
+temp/
