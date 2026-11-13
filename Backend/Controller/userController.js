@@ -118,12 +118,14 @@ const otpVerify = async (req, res) => {
 // ================= LOGIN =================
 
 
+
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
         if (!email || !password) {
             return res.status(400).json({
+                success: false,
                 message: "Email and password are required"
             });
         }
@@ -132,12 +134,14 @@ const login = async (req, res) => {
 
         if (!user) {
             return res.status(404).json({
+                success: false,
                 message: "User not found"
             });
         }
 
         if (!user.isVerified) {
             return res.status(400).json({
+                success: false,
                 message: "Please verify your email first"
             });
         }
@@ -146,11 +150,12 @@ const login = async (req, res) => {
 
         if (!isMatch) {
             return res.status(400).json({
+                success: false,
                 message: "Invalid email or password"
             });
         }
 
-        // JWT Token:login yaad rakhna like password geneted karta hai
+        // Generate JWT Token
         const token = jwt.sign(
             {
                 userId: user._id,
@@ -162,15 +167,19 @@ const login = async (req, res) => {
             }
         );
 
-        // Cookie me token store:browser par store karta  hai token
+        // Cookie Settings
+        const isProduction = process.env.NODE_ENV === "production";
+
         res.cookie("token", token, {
             httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-            maxAge: 7 * 24 * 60 * 60 * 1000
+            secure: isProduction,
+            sameSite: isProduction ? "none" : "lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            path: "/"
         });
 
-        res.status(200).json({
+        return res.status(200).json({
+            success: true,
             message: "Login successful",
             user: {
                 id: user._id,
@@ -180,13 +189,15 @@ const login = async (req, res) => {
         });
 
     } catch (error) {
-        console.log(error);
+        console.log("Login Error:", error);
 
-        res.status(500).json({
+        return res.status(500).json({
+            success: false,
             message: "Login failed"
         });
     }
 };
+
 
 
 // ================= FORGOT PASSWORD =================
